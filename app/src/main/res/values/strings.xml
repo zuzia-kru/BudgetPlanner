@@ -10,4 +10,5 @@
     <string name="radio_food">Food</string>
     <string name="radio_transport">Transport</string>
     <string name="radio_other">Other</string>
+    <string name="text_lastWeek">Spendings last 7 days</string>
 </resources>
