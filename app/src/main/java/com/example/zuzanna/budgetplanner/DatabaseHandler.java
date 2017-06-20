@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.example.zuzanna.budgetplanner.BudgetRecord;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Zuzanna on 02/04/2017.
@@ -83,6 +85,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        // Important to close the DB connection
+        db.close();
         return sum;
+    }
+
+    public ArrayList<String[]> getLastSevenDays() {
+        // Generate dates for last week period Unix format
+        Calendar cal = new GregorianCalendar();
+        long today = cal.getTimeInMillis();
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        long sevenDaysAgo = cal.getTimeInMillis();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM");
+
+        ArrayList<String[]> spendingsList = new ArrayList<String[]>();
+        String query = "SELECT strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') AS date, TOTAL(" + KEY_AMOUNT + ") AS spent"
+                    + " FROM " + TABLE_BUDGET
+                    + " WHERE " + KEY_DATE + " BETWEEN " + sevenDaysAgo + " AND " + today
+                    + " GROUP BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch')"
+                    + " ORDER BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') ASC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            while(!cursor.isAfterLast()) {
+                spendingsList.add(new String[]{
+                        cursor.getString(cursor.getColumnIndex(KEY_DATE)),
+                        cursor.getString(cursor.getColumnIndex("spent"))
+                });
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        db.close();
+        return spendingsList;
     }
 }
