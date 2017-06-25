@@ -5,10 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Zuzanna on 02/04/2017.
@@ -79,7 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int column_index = cursor.getColumnIndex(KEY_AMOUNT);
         float sum = 0;
         if (cursor.moveToFirst()) {
-            while(!cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 sum += cursor.getFloat(column_index);
                 cursor.moveToNext();
             }
@@ -90,30 +91,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return sum;
     }
 
-    public ArrayList<String[]> getLastSevenDays() {
+    //todo parameterise
+    public Map<String, String> getLastSevenDays() {
         // Generate dates for last week period Unix format
         Calendar cal = new GregorianCalendar();
         long today = cal.getTimeInMillis();
         cal.add(Calendar.DAY_OF_MONTH, -7);
         long sevenDaysAgo = cal.getTimeInMillis();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM");
-
-        ArrayList<String[]> spendingsList = new ArrayList<String[]>();
+        Map<String, String> spendingsList = new HashMap<>();
         String query = "SELECT strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') AS date, TOTAL(" + KEY_AMOUNT + ") AS spent"
-                    + " FROM " + TABLE_BUDGET
-                    + " WHERE " + KEY_DATE + " BETWEEN " + sevenDaysAgo + " AND " + today
-                    + " GROUP BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch')"
-                    + " ORDER BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') ASC";
+                + " FROM " + TABLE_BUDGET
+                + " WHERE " + KEY_DATE + " BETWEEN " + sevenDaysAgo + " AND " + today
+                + " GROUP BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch')"
+                + " ORDER BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') ASC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            while(!cursor.isAfterLast()) {
-                spendingsList.add(new String[]{
+            while (!cursor.isAfterLast()) {
+                spendingsList.put(
                         cursor.getString(cursor.getColumnIndex(KEY_DATE)),
                         cursor.getString(cursor.getColumnIndex("spent"))
-                });
+                );
                 cursor.moveToNext();
             }
         }
