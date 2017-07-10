@@ -15,7 +15,6 @@ public class ViewReportActivity extends AppCompatActivity {
 
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         TextView textView = (TextView) findViewById(R.id.totalSum);
-        float sum = databaseHandler.getTotalSum();
         String textToDisplay = String.format("Total money spent up to date: %f", databaseHandler.getTotalSum());
         textView.setText(textToDisplay);
         databaseHandler.close();
