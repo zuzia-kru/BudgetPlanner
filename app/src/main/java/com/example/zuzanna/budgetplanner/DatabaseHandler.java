@@ -92,17 +92,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //todo parameterise
-    public Map<String, String> getLastSevenDays() {
+    public Map<String, String> getLastDays(int daysBefore) {
         // Generate dates for last week period Unix format
         Calendar cal = new GregorianCalendar();
         long today = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_MONTH, -7);
-        long sevenDaysAgo = cal.getTimeInMillis();
+        cal.add(Calendar.DATE, daysBefore);
+        long timeAgo = cal.getTimeInMillis();
 
         Map<String, String> spendingsList = new HashMap<>();
         String query = "SELECT strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') AS date, TOTAL(" + KEY_AMOUNT + ") AS spent"
                 + " FROM " + TABLE_BUDGET
-                + " WHERE " + KEY_DATE + " BETWEEN " + sevenDaysAgo + " AND " + today
+                + " WHERE " + KEY_DATE + " BETWEEN " + timeAgo + " AND " + today
                 + " GROUP BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch')"
                 + " ORDER BY strftime('%d/%m', " + KEY_DATE + " / 1000, 'unixepoch') ASC";
         SQLiteDatabase db = this.getReadableDatabase();

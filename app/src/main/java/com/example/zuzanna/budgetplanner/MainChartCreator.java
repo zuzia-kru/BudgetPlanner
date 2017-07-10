@@ -28,10 +28,12 @@ import java.util.Map;
 
 public class MainChartCreator {
 
+    private static final int DAYS_OF_MONTH = 7;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
+    
     private BarChart barChart;
     private TextView lastWeek;
     private DatabaseHandler databaseHandler;
-    final static private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
 
     public MainChartCreator() {
     }
@@ -43,12 +45,12 @@ public class MainChartCreator {
     }
 
     public void invoke() {
-        Map<String, String> lastWeekSpendings = databaseHandler.getLastSevenDays();
+        Map<String, String> lastWeekSpendings = databaseHandler.getLastDays(DAYS_OF_MONTH);
 
-        if (lastWeekSpendings != null && lastWeekSpendings.size() != 0) {
+        if (lastWeekSpendings != null && lastWeekSpendings.isEmpty()) {
             lastWeek.setVisibility(View.VISIBLE);
             configureChartsLook();
-            final List<String> lastWeekDates = getDatesAxis(7); //todo make all related methods parameterized too
+            final List<String> lastWeekDates = getLastDaysFormatted(new GregorianCalendar(), DAYS_OF_MONTH); //todo make all related methods parameterized too
             List<BarEntry> entries = getBarEntries(lastWeekSpendings, lastWeekDates);
             BarData dataChart = configureDataToBeDisplayed(entries);
             setXAxisValues(lastWeekDates);
@@ -74,12 +76,11 @@ public class MainChartCreator {
 
     @NonNull
     private BarData configureDataToBeDisplayed(List<BarEntry> entries) {
-        BarDataSet spendings = new BarDataSet(entries, "Last 7 days spendings");
-        List<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add((IBarDataSet) spendings);
-        BarData dataChart = new BarData(dataSets);
+        BarDataSet spendings = new BarDataSet(entries, String.format("Last %d days spendings", DAYS_OF_MONTH));
         spendings.setColors(ColorTemplate.COLORFUL_COLORS);
-        return dataChart;
+        List<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(spendings);
+        return new BarData(dataSets);
     }
 
     @NonNull
@@ -109,13 +110,16 @@ public class MainChartCreator {
     }
 
     @NonNull
-    public List<String> getDatesAxis(int daysBack) {
+    List<String> getLastDaysFormatted(Calendar calendar, int daysBack) {
         final List<String> lastWeekDates = new ArrayList<>();
-        Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -daysBack);
-        for (int i = 0; i < daysBack; i++) {
-            cal.add(Calendar.DATE, 1);
-            lastWeekDates.add(dateFormat.format(cal.getTime()));
+        if (daysBack <= 0) {
+            lastWeekDates.add(dateFormat.format(calendar.getTime()));
+        } else {
+            calendar.add(Calendar.DATE, -daysBack);
+            for (int i = 0; i < daysBack; i++) {
+                calendar.add(Calendar.DATE, 1);
+                lastWeekDates.add(dateFormat.format(calendar.getTime()));
+            }
         }
         return lastWeekDates;
     }
