@@ -47,7 +47,7 @@ public class MainChartCreator {
     public void invoke() {
         Map<String, String> lastWeekSpendings = databaseHandler.getLastDays(DAYS_OF_MONTH);
 
-        if (lastWeekSpendings != null && lastWeekSpendings.isEmpty()) {
+        if (lastWeekSpendings != null && !lastWeekSpendings.isEmpty()) {
             lastWeek.setVisibility(View.VISIBLE);
             configureChartsLook();
             final List<String> lastWeekDates = getLastDaysFormatted(new GregorianCalendar(), DAYS_OF_MONTH); //todo make all related methods parameterized too

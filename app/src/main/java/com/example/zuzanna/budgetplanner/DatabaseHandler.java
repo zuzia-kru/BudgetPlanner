@@ -96,7 +96,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Generate dates for last week period Unix format
         Calendar cal = new GregorianCalendar();
         long today = cal.getTimeInMillis();
-        cal.add(Calendar.DATE, daysBefore);
+        cal.add(Calendar.DATE, daysBefore * -1);
         long timeAgo = cal.getTimeInMillis();
 
         Map<String, String> spendingsList = new HashMap<>();
