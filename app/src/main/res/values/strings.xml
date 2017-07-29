@@ -3,6 +3,7 @@
     <string name="button_add_record">Record spendings</string>
     <string name="button_view_report">View reports</string>
     <string name="button_send_data">Send data</string>
+    <string name="button_view_recent">Go</string>
     <string name="edit_amount_to_record">Enter the amount</string>
     <string name="edit_comment_the_entry">How did you spend the money?</string>
     <string name="radio_monthly">Monthly fixed</string>
@@ -11,4 +12,7 @@
     <string name="radio_transport">Transport</string>
     <string name="radio_other">Other</string>
     <string name="text_lastWeek">Spendings last 7 days</string>
+    <string name="text_recent_spendings">Spendings last X days</string>
+    <string name="text_show_recent_spendings">Show me spendings from last</string>
+    <string name="text_days">days</string>
 </resources>

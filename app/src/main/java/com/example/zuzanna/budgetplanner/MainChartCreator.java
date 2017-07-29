@@ -28,41 +28,49 @@ import java.util.Map;
 
 public class MainChartCreator {
 
-    private static final int DAYS_OF_MONTH = 7;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
-    
-    private BarChart barChart;
-    private TextView lastWeek;
-    private DatabaseHandler databaseHandler;
 
-    public MainChartCreator() {
+    private final int DAYS_OF_MONTH = 1;
+    private BarChart barChart;
+    private TextView lastDaysView;
+    private DatabaseHandler databaseHandler;
+    private Calendar calendar;
+
+    public BarChart getBarChart() {
+        return barChart;
     }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
 
     public MainChartCreator(BarChart barChart, TextView lastWeek, DatabaseHandler databaseHandler) {
         this.barChart = barChart;
-        this.lastWeek = lastWeek;
+        this.lastDaysView = lastWeek;
         this.databaseHandler = databaseHandler;
+        this.calendar = new GregorianCalendar();
     }
 
     public void invoke() {
         Map<String, String> lastWeekSpendings = databaseHandler.getLastDays(DAYS_OF_MONTH);
 
         if (lastWeekSpendings != null && !lastWeekSpendings.isEmpty()) {
-            lastWeek.setVisibility(View.VISIBLE);
+            lastDaysView.setVisibility(View.VISIBLE);
             configureChartsLook();
-            final List<String> lastWeekDates = getLastDaysFormatted(new GregorianCalendar(), DAYS_OF_MONTH); //todo make all related methods parameterized too
+            final List<String> lastWeekDates = getLastDaysFormatted(calendar, DAYS_OF_MONTH);
             List<BarEntry> entries = getBarEntries(lastWeekSpendings, lastWeekDates);
             BarData dataChart = configureDataToBeDisplayed(entries);
             setXAxisValues(lastWeekDates);
 
             barChart.setData(dataChart);
         } else {
-            lastWeek.setVisibility(View.INVISIBLE);
+            lastDaysView.setVisibility(View.INVISIBLE);
             barChart.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void setXAxisValues(final List<String> lastWeekDates) {
+    public void setXAxisValues(final List<String> lastWeekDates) {
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);

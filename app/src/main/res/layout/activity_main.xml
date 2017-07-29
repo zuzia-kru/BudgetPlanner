@@ -61,4 +61,34 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/chart" />
 
+    <EditText
+        android:id="@+id/editNumber"
+        android:layout_width="71dp"
+        android:layout_height="52dp"
+        android:ems="10"
+        android:hint="@string/text_days"
+        android:inputType="number"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="139dp" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="44dp"
+        android:layout_height="47dp"
+        android:onClick="getRecentSpendingsChart"
+        android:text="@string/button_view_recent"
+        tools:layout_editor_absoluteX="275dp"
+        tools:layout_editor_absoluteY="140dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_show_recent_spendings"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="99dp" />
+
 </android.support.constraint.ConstraintLayout>
